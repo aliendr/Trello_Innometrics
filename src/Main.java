@@ -10,20 +10,6 @@ public class Main {
         Metrics metrics = new Metrics(key,token);
         metrics.initialise();
 
-        ArrayList<Action> list = metrics.getActionsfromBoard("5e32cc1031e2f91141ee1077");
-
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println(list.get(i).getId());
-            System.out.println(list.get(i).getDate());
-            System.out.println(list.get(i).getIdMemberCreator());
-            System.out.println(list.get(i).getType());
-            System.out.println(list.get(i).getData());
-            System.out.println();
-            System.out.println();
-
-        }
-
-
     }
 
 

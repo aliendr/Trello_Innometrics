@@ -1,4 +1,8 @@
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Metrics {
     private String baseAddress = "https://api.trello.com/1/";
@@ -19,24 +23,61 @@ public class Metrics {
 
         HttpClient httpClient = new HttpClient();
         String response = httpClient.jsonGetRequest(request);
-        JsonParser jsonParser = new JsonParser();
-        this.member = jsonParser.getMember(response);
+        Member member = getMember(response);
 
-//        JSONObject memberJson = new JSONObject(response);
-//        System.out.println(memberJson.toString(2));
+        // for now just variable
+        String myBoardId = member.getBoards().get(0);
+        request = baseAddress + "boards/" + myBoardId+ "/?fields=id&actions=all&actions_limit=10&action_memberCreator_fields=username" + "&key=" + apiKey +"&token=" + apiToken;
+        response = HttpClient.jsonGetRequest(request);
+        ArrayList<Action> actionsArray = getActionsArray(response);
+        Board board = new Board(myBoardId,actionsArray);
 
         return true;
     }
 
-    ArrayList<Action> getActionsfromBoard(String boardId){
-        Board board = new Board(boardId, apiKey, apiToken);
-        ArrayList<Action> listOfActions = board.getAllActions();
-        return listOfActions;
+
+    public ArrayList<Action> getActionsArray(String response){
+        JSONObject actionsJson = new JSONObject(response);
+        JSONArray actionJsonArray = actionsJson.getJSONArray("actions");
+        return fromJsonArrayToList(actionJsonArray);
     }
 
 
+    private ArrayList<Action> fromJsonArrayToList(JSONArray actionsJson){
+        ArrayList<Action> listOfActions = new ArrayList<>();
+        for (int i = 0; i < actionsJson.length(); i++) {
+            Action action = getAction(actionsJson.getJSONObject(i));
+            listOfActions.add(action);
+        }
+        return listOfActions;
+    }
+
+    private Action getAction(JSONObject actionJson){
+        String id = actionJson.getString("id");
+        String idMemberCreator = actionJson.getString("idMemberCreator");
+        String type = actionJson.getString("type");
+        String date = actionJson.getString("date");
+        JSONObject data = actionJson.getJSONObject("data");
+        return new Action(id, idMemberCreator, type, date, data);
+    }
 
 
+    private Member getMember(String response){
+        JSONObject memberJson = new JSONObject(response);
+        String id = memberJson.getString("id");
+        String username = memberJson.getString("username");
+        String boardString = memberJson.get("idBoards").toString();
+        ArrayList<String> boards = boardsToArray(boardString);
+        return new Member(id, username,boards);
+    }
 
+    private ArrayList<String> boardsToArray(String boardString){
+        boardString = boardString.substring(1,boardString.length()-1);
+        String[] boards = boardString.split(",");
+        for (int i = 0; i < boards.length; i++) {
+            boards[i] = boards[i].substring(1,boards[i].length()-1);
+        }
+        return new ArrayList(Arrays.asList(boards));
+    }
 
 }
