@@ -16,14 +16,16 @@ public class Board {
     @ElementCollection
     @CollectionTable(name="listOfActions")
     private List<String> listOfActions;
+    private String name;
 
     private Board(){};
     public Board(String boardId){
         this.boardId=boardId;
     }
-    public Board(String boardId, List<String> listOfActions){
+    public Board(String boardId, List<String> listOfActions, String name){
         this.boardId=boardId;
         this.listOfActions = listOfActions;
+        this.name = name;
     }
 
     public String getBoardId() {
@@ -40,5 +42,13 @@ public class Board {
 
     public void setListOfActions(List<String> listOfActions) {
         this.listOfActions = listOfActions;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

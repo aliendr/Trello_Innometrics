@@ -1,19 +1,18 @@
 package com.example.trello.controllers;
 
 import com.example.trello.entries.Action;
-import com.example.trello.repositories.ActionRepository;
+import com.example.trello.services.ActionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import java.util.Optional;
 
 @RestController
 public class ActionContoller {
 
     @Autowired
-    private ActionRepository actionRepository;
+    private ActionService actionService;
 
 //    ActionContoller(ActionRepository actionRepository){
 //        this.actionRepository=actionRepository;
@@ -21,9 +20,13 @@ public class ActionContoller {
 
     @GetMapping("/actions")
     List<Action> getAllActions() {
-        return actionRepository.findAll();
+        return actionService.findAll();
     }
 
+    @GetMapping("/actions/{id}")
+    Optional<Action> getAction(@PathVariable String id) {
+        return actionService.findById(id);
+    }
 
 
 

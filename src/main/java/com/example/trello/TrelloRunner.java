@@ -4,6 +4,7 @@ import com.example.trello.entries.Action;
 import com.example.trello.entries.Board;
 import com.example.trello.entries.Member;
 import com.example.trello.repositories.ActionRepository;
+import com.example.trello.repositories.AuthenticationRepository;
 import com.example.trello.repositories.BoardRepository;
 import com.example.trello.repositories.MemberRepository;
 import org.json.JSONArray;
@@ -16,10 +17,10 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class TrelloRunner implements ApplicationRunner {
+public class TrelloRunner{
     private String baseAddress = "https://api.trello.com/1/";
-    private String apiKey = "ffce8063806eb2065f6d792bc0793ece";
-    private String apiToken = "af80fef990571cc1916e003ca274a25c56822b200a99604a47d482e8f2338c38";
+//    private String apiKey = "ffce8063806eb2065f6d792bc0793ece";
+//    private String apiToken = "af80fef990571cc1916e003ca274a25c56822b200a99604a47d482e8f2338c38";
 
     @Autowired
     private MemberRepository memberRepository;
@@ -27,8 +28,11 @@ public class TrelloRunner implements ApplicationRunner {
     private ActionRepository actionRepository;
     @Autowired
     private BoardRepository boardRepository;
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
+    @Autowired
+    private AuthenticationRepository authenticationRepository;
+
+//    @Override
+    public void run(String apiKey, String apiToken){
         String request = baseAddress + "members/me?boardBackgrounds=none&boardsInvited_fields=name%2Cclosed%2CidOrganization&boardStars=false&cards=" +
                 "none&customBoardBackgrounds=none&customEmoji=none&customStickers=none&fields=email%2Cusername%2CidBoards&notifications=" +
                 "none&organizations=none&organization_fields=none&organization_paid_account=false&organizationsInvited=none&organizationsInvited_fields=" +
@@ -42,10 +46,15 @@ public class TrelloRunner implements ApplicationRunner {
         for (int i = 0; i < member.getBoards().size(); i++) {
             String boardId = member.getBoards().get(i);
             Board board = new Board(boardId);
-            request = baseAddress + "boards/" + boardId+ "/?fields=id&actions=all&actions_limit=10&action_memberCreator_fields=username" + "&key=" + apiKey +"&token=" + apiToken;
+            request = baseAddress + "boards/" + boardId+ "/?fields=id&actions=all&actions_limit=1000&action_memberCreator_fields=username" + "&key=" + apiKey +"&token=" + apiToken;
             response = HttpClient.jsonGetRequest(request);
             ArrayList<String> actionsId = getActionsId(response, boardId);
             board.setListOfActions(actionsId);
+
+            request = baseAddress + "boards/"  + boardId + "/?fields=name" + "&key=" + apiKey +"&token=" + apiToken;
+            response = HttpClient.jsonGetRequest(request);
+            JSONObject boardsJson = new JSONObject(response);
+            board.setName(boardsJson.getString("name"));
             boardRepository.save(board);
         }
     }
