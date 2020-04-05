@@ -14,15 +14,17 @@ public class Action {
     private String idMemberCreator;
     private String type;
     private String date;
-    //private JSONObject data;
+    private String memberCreatorUsername;
+    //private String data;
 
     private Action(){};
-    public Action(String id, String boardId, String idMemberCreator, String type, String date) {
+    public Action(String id, String boardId, String idMemberCreator, String type, String date, String memberCreatorUsername) {
         this.actionId = id;
         this.boardId = boardId;
         this.idMemberCreator = idMemberCreator;
         this.type = type;
         this.date = date;
+        this.memberCreatorUsername = memberCreatorUsername;
         //this.data = data;
     }
 
@@ -34,7 +36,7 @@ public class Action {
         this.boardId = boardId;
     }
 
-//    public void setData(JSONObject data) {
+//    public void setData(String data) {
 //        this.data = data;
 //    }
 
@@ -71,7 +73,15 @@ public class Action {
     }
 
 //     public String getData(){
-//        return data.toString(2);
+//        return data;
 //    }
 
+
+    public String getMemberCreatorUsername() {
+        return memberCreatorUsername;
+    }
+
+    public void setMemberCreatorUsername(String memberCreatorUsername) {
+        this.memberCreatorUsername = memberCreatorUsername;
+    }
 }

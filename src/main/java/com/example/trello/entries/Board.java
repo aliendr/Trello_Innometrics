@@ -12,15 +12,20 @@ public class Board {
 
     @Id
     private String boardId;
-
+    private String name;
+    private String url;
     @ElementCollection
     @CollectionTable(name="listOfActions")
     private List<String> listOfActions;
-    private String name;
+
 
     private Board(){};
     public Board(String boardId){
         this.boardId=boardId;
+    }
+    public Board(String boardId, String name){
+        this.boardId=boardId;
+        this.name=name;
     }
     public Board(String boardId, List<String> listOfActions, String name){
         this.boardId=boardId;
@@ -50,5 +55,13 @@ public class Board {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

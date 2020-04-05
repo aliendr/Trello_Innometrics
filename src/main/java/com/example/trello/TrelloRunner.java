@@ -12,15 +12,17 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 @Component
 public class TrelloRunner{
     private String baseAddress = "https://api.trello.com/1/";
-//    private String apiKey = "ffce8063806eb2065f6d792bc0793ece";
-//    private String apiToken = "af80fef990571cc1916e003ca274a25c56822b200a99604a47d482e8f2338c38";
 
     @Autowired
     private MemberRepository memberRepository;
@@ -31,8 +33,56 @@ public class TrelloRunner{
     @Autowired
     private AuthenticationRepository authenticationRepository;
 
-//    @Override
-    public void run(String apiKey, String apiToken){
+
+    public void validateTokenKey(String apiKey, String apiToken){
+        try{
+            String request = baseAddress + "members/me?boardBackgrounds=none&boardsInvited_fields=name%2Cclosed%2CidOrganization&boardStars=false&cards=" +
+                    "none&customBoardBackgrounds=none&customEmoji=none&customStickers=none&fields=email%2Cusername%2CidBoards&notifications=" +
+                    "none&organizations=none&organization_fields=none&organization_paid_account=false&organizationsInvited=none&organizationsInvited_fields=" +
+                    "none&paid_account=false&savedSearches=false&tokens=none&key="+ apiKey+"&token="+apiToken;
+
+            HttpClient httpClient = new HttpClient();
+            String response = httpClient.jsonGetRequest(request);
+
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "invalid token");
+        }
+    }
+
+    public List<Board> prerun(String apiKey, String apiToken){
+        //throw new ResponseStatusException(HttpStatus.NOT_FOUND,"net takogo tokena");
+        try{
+            String request = baseAddress + "members/me?boardBackgrounds=none&boardsInvited_fields=name%2Cclosed%2CidOrganization&boardStars=false&cards=" +
+                    "none&customBoardBackgrounds=none&customEmoji=none&customStickers=none&fields=email%2Cusername%2CidBoards&notifications=" +
+                    "none&organizations=none&organization_fields=none&organization_paid_account=false&organizationsInvited=none&organizationsInvited_fields=" +
+                    "none&paid_account=false&savedSearches=false&tokens=none&key="+ apiKey+"&token="+apiToken;
+
+            HttpClient httpClient = new HttpClient();
+            String response = httpClient.jsonGetRequest(request);
+            Member member = getMember(response);
+
+            List<Board> listOfBoards = new ArrayList<>();
+            for (int i = 0; i < member.getBoards().size(); i++) {
+                String boardId = member.getBoards().get(i);
+                Board board = new Board(boardId);
+                request = baseAddress + "boards/"  + boardId + "/?fields=name,url" + "&key=" + apiKey +"&token=" + apiToken;
+                response = HttpClient.jsonGetRequest(request);
+                JSONObject boardsJson = new JSONObject(response);
+                board.setName(boardsJson.getString("name"));
+                board.setUrl(boardsJson.getString("url"));
+                listOfBoards.add(board);
+            }
+
+            return listOfBoards;
+
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "invalid token");
+        }
+
+    }
+
+
+    public void run(String apiKey, String apiToken, String boardUrl){
         String request = baseAddress + "members/me?boardBackgrounds=none&boardsInvited_fields=name%2Cclosed%2CidOrganization&boardStars=false&cards=" +
                 "none&customBoardBackgrounds=none&customEmoji=none&customStickers=none&fields=email%2Cusername%2CidBoards&notifications=" +
                 "none&organizations=none&organization_fields=none&organization_paid_account=false&organizationsInvited=none&organizationsInvited_fields=" +
@@ -43,20 +93,32 @@ public class TrelloRunner{
         Member member = getMember(response);
         memberRepository.save(member);
 
+
+        boolean found =false;
         for (int i = 0; i < member.getBoards().size(); i++) {
             String boardId = member.getBoards().get(i);
-            Board board = new Board(boardId);
-            request = baseAddress + "boards/" + boardId+ "/?fields=id&actions=all&actions_limit=1000&action_memberCreator_fields=username" + "&key=" + apiKey +"&token=" + apiToken;
-            response = HttpClient.jsonGetRequest(request);
-            ArrayList<String> actionsId = getActionsId(response, boardId);
-            board.setListOfActions(actionsId);
 
-            request = baseAddress + "boards/"  + boardId + "/?fields=name" + "&key=" + apiKey +"&token=" + apiToken;
+            request = baseAddress + "boards/"  + boardId + "/?fields=name,url" + "&key=" + apiKey +"&token=" + apiToken;
             response = HttpClient.jsonGetRequest(request);
             JSONObject boardsJson = new JSONObject(response);
-            board.setName(boardsJson.getString("name"));
-            boardRepository.save(board);
+
+            String[] urlParts = boardsJson.getString("url").split("/");
+            if(urlParts[urlParts.length-2].equals(boardUrl)){
+                Board board = new Board(boardId);
+                board.setName(boardsJson.getString("name"));
+                board.setUrl(boardUrl);
+
+                request = baseAddress + "boards/" + boardId+ "/?fields=id&actions=all&actions_limit=1000&action_memberCreator_fields=username" + "&key=" + apiKey +"&token=" + apiToken;
+                response = HttpClient.jsonGetRequest(request);
+                ArrayList<String> actionsId = getActionsId(response, boardId);
+                board.setListOfActions(actionsId);
+                boardRepository.save(board);
+                found = true;
+                break;
+            }
         }
+        if(!found)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "invalid board url");
     }
 
     private ArrayList<String> getActionsId(String response, String boardId){
@@ -80,8 +142,9 @@ public class TrelloRunner{
         String idMemberCreator = actionJson.getString("idMemberCreator");
         String type = actionJson.getString("type");
         String date = actionJson.getString("date");
-        JSONObject data = actionJson.getJSONObject("data");
-        return new Action(id, boardId, idMemberCreator, type, date);
+        String memberCreatorUsername = actionJson.getJSONObject("memberCreator").getString("username");
+        //String data = actionJson.getJSONObject("data").toString();
+        return new Action(id, boardId, idMemberCreator, type, date, memberCreatorUsername);
     }
 
     private Member getMember(String response) {
@@ -90,10 +153,6 @@ public class TrelloRunner{
         String username = memberJson.getString("username");
         String boardString = memberJson.get("idBoards").toString();
         ArrayList<String> boardsId = boardsToArray(boardString);
-//        ArrayList<Board> boardList = new ArrayList<Board>();
-//        for (int i = 0; i < boardsId.size(); i++) {
-//            boardList.add(new Board(boardsId.get(i)));
-//        }
         return new Member(id,username,boardsId);
     }
 

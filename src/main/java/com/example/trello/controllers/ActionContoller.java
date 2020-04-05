@@ -14,10 +14,6 @@ public class ActionContoller {
     @Autowired
     private ActionService actionService;
 
-//    ActionContoller(ActionRepository actionRepository){
-//        this.actionRepository=actionRepository;
-//    }
-
     @GetMapping("/actions")
     List<Action> getAllActions() {
         return actionService.findAll();
@@ -28,7 +24,21 @@ public class ActionContoller {
         return actionService.findById(id);
     }
 
+    @GetMapping("/actions/type/{type}")
+    List<Optional<Action>> getActionsByType(@PathVariable String type) { return actionService.findByTypeOfAction(type); }
 
+    @GetMapping("actions/date/fromTo/{from}/{to}")
+    List<Optional<Action>> getActionsByDateFromTo(@PathVariable String from, @PathVariable String to){
+        return actionService.findAllByDateBetween(from,to);
+    }
 
+    @GetMapping("actions/date/to/{to}")
+    List<Optional<Action>> getActionsByDateTo(@PathVariable String to){
+        return actionService.findByDateBefore(to);
+    }
 
+    @GetMapping("actions/date/from/{from}")
+    List<Optional<Action>> getActionsByDateFrom(@PathVariable String from){
+        return actionService.findAllByDateAfter(from);
+    }
 }

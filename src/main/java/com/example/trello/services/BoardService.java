@@ -24,14 +24,18 @@ public class BoardService {
         return boardRepository.findById(id);
     }
 
-    public List<Optional> findAllActionsForBoard(String id) {
+    public List<Optional<Action>> findAllActionsForBoard(String id) {
         Optional<Board> board = boardRepository.findById(id);
         List<String> listOfActionsId = board.get().getListOfActions();
-        List<Optional> actions = new ArrayList<>();
+        List<Optional<Action>> actions = new ArrayList<>();
         for (int i = 0; i < listOfActionsId.size(); i++) {
             actions.add(actionService.findById(listOfActionsId.get(i)));
         }
         return actions;
+    }
+
+    public Board findByUrl(String url){
+        return boardRepository.findByUrl(url);
     }
 
 }
