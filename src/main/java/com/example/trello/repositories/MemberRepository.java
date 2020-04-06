@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member,String> {
+    public Member findDistinctByBoardsIsContainingAndAndTokenAndKey(String boardId, String token, String key);
+    public Member findDistinctByTokenAndKey(String token, String key);
 }

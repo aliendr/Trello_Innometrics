@@ -4,6 +4,7 @@ import com.example.trello.entries.Action;
 import com.example.trello.entries.Board;
 import com.example.trello.services.ActionService;
 import com.example.trello.services.BoardService;
+import com.example.trello.services.TrelloService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,16 +20,19 @@ public class TrelloController {
     private TrelloRunner trelloRunner;
     @Autowired
     private ActionService actionService;
+    @Autowired
+    private TrelloService trelloService;
 
     @PostMapping("/keytoken")
     public List<Board> addToken(@RequestParam String token, @RequestParam String key) {
-        return trelloRunner.prerun(key, token);
+        return trelloService.addTokenKey(token, key);
     }
 
     @PostMapping("/keytoken/boardUrl")
     public Board fetchBoard(@RequestParam String token, @RequestParam String key, @RequestParam String boardUrl) {
-        trelloRunner.run(key, token, boardUrl);
-        return boardService.findByUrl(boardUrl);
+//        trelloRunner.run(key, token, boardUrl);
+//        return boardService.findByUrl(boardUrl);
+        return trelloService.addTokenKeyBoardUrl(token, key, boardUrl);
     }
 
     @GetMapping("/boards")

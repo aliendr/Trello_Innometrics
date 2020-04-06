@@ -11,5 +11,6 @@ import java.util.Optional;
 @Repository
 public interface BoardRepository extends JpaRepository<Board,String> {
     public Board findByUrl(String url);
+
 }
 

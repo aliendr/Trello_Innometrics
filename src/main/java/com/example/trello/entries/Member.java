@@ -8,41 +8,41 @@ import java.util.List;
 public class Member {
 
     @Id
-    private String id;
-    private String username;
+    private String token;
+    private String key;
 
     @ElementCollection
     @CollectionTable(name="listOfBoards")
     private List<String> boards;
 
     private Member(){}
-    public Member(String id, String username, List<String> boards){
-        this.id = id;
-        this.username = username;
+    public Member(String token, String key, List<String> boards){
+        this.token = token;
+        this.key = key;
         this.boards = boards;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public void setBoards(List<String> boards) {
         this.boards = boards;
     }
 
-    public String getId(){
-        return this.id;
-    }
-
     public List<String> getBoards(){
         return this.boards;
     }
 
-    public String getUsername(){
-        return this.username;
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

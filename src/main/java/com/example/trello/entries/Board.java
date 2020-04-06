@@ -10,9 +10,12 @@ import java.util.List;
 @Entity
 public class Board {
 
-    @Id
+
     private String boardId;
+    private String token;
+    private String key;
     private String name;
+    @Id
     private String url;
     @ElementCollection
     @CollectionTable(name="listOfActions")
@@ -20,17 +23,15 @@ public class Board {
 
 
     private Board(){};
-    public Board(String boardId){
-        this.boardId=boardId;
+    public Board(String url){
+        this.url=url;
     }
-    public Board(String boardId, String name){
+    public Board(String name, String url, String boardId, String token, String key ){
         this.boardId=boardId;
         this.name=name;
-    }
-    public Board(String boardId, List<String> listOfActions, String name){
-        this.boardId=boardId;
-        this.listOfActions = listOfActions;
-        this.name = name;
+        this.url = url;
+        this.token= token;
+        this.key=key;
     }
 
     public String getBoardId() {
@@ -63,5 +64,21 @@ public class Board {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }
