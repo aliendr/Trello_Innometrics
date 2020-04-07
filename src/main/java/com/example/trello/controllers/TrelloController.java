@@ -67,7 +67,7 @@ public class TrelloController {
             } else {
                 if(from==null){
                     if(to==null)
-                        return boardService.findAllActionsForBoard(token,key,boardId);
+                        return actionService.getActionsForBoard(boardId);
                     else
                         return actionService.findByDateBefore(boardId,to);
                 } else {
