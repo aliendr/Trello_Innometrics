@@ -14,51 +14,48 @@ public class ActionService {
     @Autowired
     private ActionRepository actionRepository;
 
-    public List<Action> findAll(){
-        return actionRepository.findAll();
-    }
-
     public Optional<Action> findById(String id) {
         return actionRepository.findById(id);
     }
 
 
-    public List<Optional<Action>> findByTypeOfAction(String type){
-        return actionRepository.findAllByTypeOrderByDate(type);
+    public Optional<Action> findByBoardIdAndActionId(String boardId, String actionId) {
+        return actionRepository.findByBoardIdAndActionId(boardId,actionId);
     }
+
 
     public List<Optional<Action>> findAllByTypeAndBoardId(String type, String boardId){
         return actionRepository.findAllByTypeAndBoardIdOrderByDate(type, boardId);
     }
 
     public List<Optional<Action>> findAllByTypeAndBoardIdAndDateBefore(String type, String boardId, String before){
-        return actionRepository.findAllByTypeAndBoardIdAndDateBefore(type, boardId, before);
+        return actionRepository.findAllByTypeAndBoardIdAndDateBeforeOrderByDate(type, boardId, before);
     }
 
     public List<Optional<Action>> findAllByTypeAndBoardIdAndDateAfter(String type, String boardId, String after){
-        return actionRepository.findAllByTypeAndBoardIdAndDateAfter(type, boardId, after);
+        return actionRepository.findAllByTypeAndBoardIdAndDateAfterOrderByDate(type, boardId, after);
     }
 
     public List<Optional<Action>> findAllByTypeAndBoardIdAndDateAfterAndDateBefore(String type, String boardId,String after,String before){
-        return actionRepository.findAllByTypeAndBoardIdAndDateAfterAndDateBefore(type, boardId, after,before);
+        return actionRepository.findAllByTypeAndBoardIdAndDateAfterAndDateBeforeOrderByDate(type, boardId, after,before);
     }
 
 
-
-    public List<Optional<Action>> findAllByDateBetween(String after, String before){
-        return actionRepository.findAllByDateBetweenOrderByDate(after,before);
+    public List<Optional<Action>> findByDateBefore(String boardId, String before){
+        return actionRepository.findAllByBoardIdAndDateBeforeOrderByDate(boardId, before);
     }
 
-    public List<Optional<Action>> findAllByDateAfter(String after){
-        return actionRepository.findAllByDateAfterOrderByDate(after);
+    public List<Optional<Action>> findAllByDateAfter(String boardId, String after){
+        return actionRepository.findAllByBoardIdAndDateAfterOrderByDate(boardId, after);
     }
 
-    public List<Optional<Action>> findByDateBefore(String before){
-        return actionRepository.findAllByDateBeforeOrderByDate(before);
+
+    public List<Optional<Action>> findAllByDateBetween(String boardId, String after, String before){
+        return actionRepository.findAllByBoardIdAndDateBetweenOrderByDate(boardId, after,before);
     }
 
-    public Optional<Action> findByBoardIdAndActionId(String boardId, String actionId) {
-        return actionRepository.findByBoardIdAndActionId(boardId,actionId);
+    public List<Optional<Action>> getActionsForBoard(String boardId){
+        return actionRepository.findAllByBoardId(boardId);
     }
 
 }

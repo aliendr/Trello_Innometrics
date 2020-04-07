@@ -10,7 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board,String> {
-    public Board findByUrl(String url);
+    public Optional<Board> findByTokenAndKeyAndBoardUrl(String token, String key, String url);
+    public Optional<List<Board>> findAllByTokenAndKey(String token, String key);
 
 }
 

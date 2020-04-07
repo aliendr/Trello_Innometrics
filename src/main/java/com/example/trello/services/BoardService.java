@@ -4,7 +4,9 @@ import com.example.trello.entries.Action;
 import com.example.trello.entries.Board;
 import com.example.trello.repositories.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -16,29 +18,20 @@ public class BoardService {
     @Autowired
     private ActionService actionService;
 
-    public List<Board> findAll() {
-        return boardRepository.findAll();
+    public Optional<List<Board>> getAllBoards(String token, String key){
+        return boardRepository.findAllByTokenAndKey(token,key);
     }
 
-    public Optional<Board> findById(String id) {
-        return boardRepository.findById(id);
+    public Optional<Board> getBoardByUrl(String token, String key, String url){
+        return boardRepository.findByTokenAndKeyAndBoardUrl(token, key,url);
     }
 
-    public List<Optional<Action>> findAllActionsForBoard(String id) {
-        Optional<Board> board = boardRepository.findById(id);
-        List<String> listOfActionsId = board.get().getListOfActions();
-        List<Optional<Action>> actions = new ArrayList<>();
-        for (int i = 0; i < listOfActionsId.size(); i++) {
-            actions.add(actionService.findById(listOfActionsId.get(i)));
+    public List<Optional<Action>> findAllActionsForBoard(String token, String key, String url) {
+        Optional<Board> board = boardRepository.findByTokenAndKeyAndBoardUrl(token, key,url);
+        if(board.isPresent()){
+            return actionService.getActionsForBoard(board.get().getBoardId());
         }
-        return actions;
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "invalid board url");
     }
-
-    public Board findByUrl(String url){
-        return boardRepository.findByUrl(url);
-    }
-
-
-
 
 }

@@ -3,10 +3,8 @@ package com.example.trello.services;
 import com.example.trello.HttpClient;
 import com.example.trello.entries.Action;
 import com.example.trello.entries.Board;
-import com.example.trello.entries.Member;
 import com.example.trello.repositories.ActionRepository;
 import com.example.trello.repositories.BoardRepository;
-import com.example.trello.repositories.MemberRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +23,6 @@ public class TrelloService {
     private ActionRepository actionRepository;
     @Autowired
     private BoardRepository boardRepository;
-    @Autowired
-    private MemberRepository memberRepository;
 
 
     public void validateTokenKey(String token, String key){
@@ -47,55 +43,35 @@ public class TrelloService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "invalid token");
         }
     }
-    
-//    private boolean checkBoardExistence(String token, String key, String url){
-//
-//
-//        String request = baseAddress + "boards/"  + boardId + "/?fields=name,shortUrl" + "&key=" + key +"&token=" + token;
-//    }
 
-    public Board addTokenKeyBoardUrl(String token, String key, String url){
+    public Optional<Board> addTokenKeyBoardUrl(String token, String key, String url){
         validateTokenKey(token,key);
         List<Board> boards =getBoadsList(token, key);
-        if(memberRepository.findDistinctByTokenAndKey(token,key)==null){
-            List<String> boardsUrl = new ArrayList<>();
-            for (Board b: boards) {
-                boardsUrl.add(b.getUrl());
+
+        if(!boardRepository.findByTokenAndKeyAndBoardUrl(token, key, url).isPresent()){
+            boolean found=false;
+            for (Board value : boards) {
+
+                if (value.getBoardUrl().equals(url)) {
+                    Board board = value;
+                    String request = baseAddress + "boards/" + board.getBoardId() + "/?fields=id&actions=all&actions_limit=1000&action_memberCreator_fields=username" + "&key=" + key + "&token=" + token;
+                    String response = HttpClient.jsonGetRequest(request);
+                    ArrayList<String> actionsId = getActionsId(response, board.getBoardId());
+                    board.setListOfActions(actionsId);
+                    boardRepository.save(board);
+                    found = true;
+                    break;
+                }
             }
-            memberRepository.save(new Member(token,key,boardsUrl));
+
+            if(!found)
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "invalid board url");
         }
 
-        boolean found=false;
-
-        for (Board value : boards) {
-
-            if (value.getUrl().equals(url)) {
-                Board board = value;
-                String request = baseAddress + "boards/" + board.getBoardId() + "/?fields=id&actions=all&actions_limit=1000&action_memberCreator_fields=username" + "&key=" + key + "&token=" + token;
-                String response = HttpClient.jsonGetRequest(request);
-                ArrayList<String> actionsId = getActionsId(response, board.getBoardId());
-                board.setListOfActions(actionsId);
-                boardRepository.save(board);
-                found = true;
-                break;
-            }
-        }
-
-        if(!found)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "invalid board url");
-        return boardRepository.findByUrl(url);
+        return boardRepository.findByTokenAndKeyAndBoardUrl(token,key,url);
     }
 
-    private void addMember(String token, String key){
-        List<Board> boards =getBoadsList(token, key);
-        List<String> boardsUrl = new ArrayList<>();
-        for (Board b: boards) {
-            boardsUrl.add(b.getUrl());
-        }
-        memberRepository.save(new Member(token,key,boardsUrl));
-    }
-
-
+    // from trello api
     private List<Board> getBoadsList(String token,String key){
         String request = baseAddress + "members/me/boards?key="+ key +"&token="+token;
         String response = HttpClient.jsonGetRequest(request);

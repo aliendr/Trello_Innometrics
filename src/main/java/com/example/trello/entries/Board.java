@@ -1,35 +1,32 @@
 package com.example.trello.entries;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.util.ArrayList;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
 public class Board {
 
-
+    //@UniqueConstraint()
+    @Id
     private String boardId;
     private String token;
     private String key;
     private String name;
-    @Id
-    private String url;
+    //@Id
+    private String boardUrl;
     @ElementCollection
     @CollectionTable(name="listOfActions")
     private List<String> listOfActions;
 
 
     private Board(){};
-    public Board(String url){
-        this.url=url;
+    public Board(String boardUrl){
+        this.boardUrl = boardUrl;
     }
-    public Board(String name, String url, String boardId, String token, String key ){
+    public Board(String name, String boardUrl, String boardId, String token, String key ){
         this.boardId=boardId;
         this.name=name;
-        this.url = url;
+        this.boardUrl = boardUrl;
         this.token= token;
         this.key=key;
     }
@@ -58,12 +55,12 @@ public class Board {
         this.name = name;
     }
 
-    public String getUrl() {
-        return url;
+    public String getBoardUrl() {
+        return boardUrl;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setBoardUrl(String boardUrl) {
+        this.boardUrl = boardUrl;
     }
 
     public String getToken() {
