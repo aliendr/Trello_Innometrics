@@ -18,6 +18,8 @@ public class Board {
     @CollectionTable(name="listOfActions")
     private List<String> listOfActions;
 
+    private String webhook;
+
 
     private Board(){};
     public Board(String boardUrl){
@@ -77,5 +79,13 @@ public class Board {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public String getWebhook() {
+        return webhook;
+    }
+
+    public void setWebhook(String webhook) {
+        this.webhook = webhook;
     }
 }

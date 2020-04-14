@@ -4,16 +4,20 @@ import com.example.trello.entries.Board;
 import com.example.trello.services.ActionService;
 import com.example.trello.services.BoardService;
 import com.example.trello.services.TrelloService;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 public class TrelloController {
+
+    private String listeningUrl;
 
     @Autowired
     private BoardService boardService;
@@ -28,7 +32,7 @@ public class TrelloController {
     }
 
     @PostMapping("/keytoken/boardUrl")
-    public Optional<Board> fetchBoard(@RequestParam String token, @RequestParam String key, @RequestParam String boardUrl) {
+    public Optional<Board> fetchBoard(@RequestParam String token, @RequestParam String key, @RequestParam String boardUrl) throws IOException {
         return trelloService.addTokenKeyBoardUrl(token, key, boardUrl);
     }
 
@@ -81,5 +85,13 @@ public class TrelloController {
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "invalid board url");
 
+    }
+
+
+    @GetMapping("listeningUrl")
+    void webhook(@RequestBody String request){
+        JSONObject jsonObject = new JSONObject(request);
+        System.out.println(jsonObject);
+        trelloService.listenWebhook(jsonObject);
     }
 }

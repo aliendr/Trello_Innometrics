@@ -17,6 +17,9 @@ public class Action {
     private String memberCreatorUsername;
     //private String data;
 
+
+
+
     private Action(){};
     public Action(String id, String boardId, String idMemberCreator, String type, String date, String memberCreatorUsername) {
         this.actionId = id;
@@ -76,6 +79,18 @@ public class Action {
 //        return data;
 //    }
 
+
+    @Override
+    public String toString() {
+        return "Action{" +
+                "actionId='" + actionId + '\'' +
+                ", boardId='" + boardId + '\'' +
+                ", idMemberCreator='" + idMemberCreator + '\'' +
+                ", type='" + type + '\'' +
+                ", date='" + date + '\'' +
+                ", memberCreatorUsername='" + memberCreatorUsername + '\'' +
+                '}';
+    }
 
     public String getMemberCreatorUsername() {
         return memberCreatorUsername;
