@@ -4,6 +4,7 @@ import com.example.trello.entries.Board;
 import com.example.trello.services.ActionService;
 import com.example.trello.services.BoardService;
 import com.example.trello.services.TrelloService;
+import com.example.trello.services.WebhookService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,8 @@ public class TrelloController {
     private ActionService actionService;
     @Autowired
     private TrelloService trelloService;
+    @Autowired
+    private WebhookService webhookService;
 
     @PostMapping("/keytoken")
     public List<Board> addToken(@RequestParam String token, @RequestParam String key) {
@@ -88,8 +91,10 @@ public class TrelloController {
     }
 
 
-    @GetMapping("listeningUrl")
+    @PostMapping("/webhook")
     void webhook(@RequestBody String request){
+
+        //webhookService.validateWebhook(request);
         JSONObject jsonObject = new JSONObject(request);
         System.out.println(jsonObject);
         trelloService.listenWebhook(jsonObject);

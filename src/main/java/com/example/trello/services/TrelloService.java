@@ -23,7 +23,7 @@ import java.util.*;
 @Service
 public class TrelloService {
 
-    private String HOST_IP = System.getenv("HOST_IP") + "/hook";
+    private String HOST_IP = System.getenv("HOST_IP") + "/trello/hook";
 
     private String baseAddress = "https://api.trello.com/1/";
 
@@ -88,8 +88,7 @@ public class TrelloService {
         final Collection<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("key", key));
         params.add(new BasicNameValuePair("idModel", boardId));
-        params.add(new BasicNameValuePair("callbackURL", "http://85.26.165.181"));
-
+        params.add(new BasicNameValuePair("callbackURL", HOST_IP));
 
         try {
             final Content postResultForm = Request.Post("https://api.trello.com/1/tokens/"+token + "/webhooks")
@@ -100,32 +99,18 @@ public class TrelloService {
         catch (IOException e){
             throw new IOException("e");
         }
-
-
-
-//            HttpResponse<JsonNode> response = null;
-//            try {
-//                response = Unirest.post("https://api.trello.com/1/tokens/"+token + "/webhooks")
-//                        .header("Accept", "application/json")
-//                        .queryString("callbackURL", url)
-//                        .queryString("idModel", boardId)
-//                        .asJson();
-//            } catch (UnirestException e) {
-//                e.printStackTrace();
-//            }
-//
-//            assert response != null;
-//            Optional<Board> board = boardRepository.findById(boardId);
-//            if(board.isPresent())
-//                board.get().setWebhook(response.body().get("id").toString());
-//            System.out.println(response.body());
     }
 
     public void listenWebhook(JSONObject jsonObject){
+        // add verification
+
+
         Action action = getAction(jsonObject.getJSONObject("action"));
         actionRepository.save(action);
         System.out.println(action.toString());
+
     }
+
 
     // from trello api
     private List<Board> getBoadsList(String token,String key){
