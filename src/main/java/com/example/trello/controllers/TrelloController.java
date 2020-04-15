@@ -91,7 +91,7 @@ public class TrelloController {
     }
 
 
-    @PostMapping("/webhook")
+    @PostMapping("/trello/hook")
     void webhook(@RequestBody String request){
 
         //webhookService.validateWebhook(request);

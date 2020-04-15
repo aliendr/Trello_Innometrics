@@ -91,12 +91,13 @@ public class TrelloService {
         params.add(new BasicNameValuePair("callbackURL", HOST_IP));
 
         try {
-            final Content postResultForm = Request.Post("https://api.trello.com/1/tokens/"+token + "/webhooks")
+            final Content postResultForm = Request.Post("https://api.trello.com/1/tokens/"+token + "/webhooks/")
                     .bodyForm(params, Charset.defaultCharset())
                     .execute().returnContent();
             System.out.println(postResultForm.asString());
         }
         catch (IOException e){
+            System.out.println("exception inside webhook");
             throw new IOException("e");
         }
     }
