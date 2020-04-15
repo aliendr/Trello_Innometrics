@@ -6,9 +6,9 @@ services:
       - 8080:8080
     environment:
       - 'HOST_IP=http://3.16.159.7:8080' #for web hook
-      - "DB_HOST_IP=db"
-      - 'DB_NAME=gitlab'
-      - 'DB_SCHEMA=public'
+      - "DB_HOST_IP=172.17.0.1"
+      - 'DB_NAME=trello'
+      - 'DB_SCHEMA=trello'
       - "DB_USER=postgres"
       - "DB_PASSWORD=root"
 #
