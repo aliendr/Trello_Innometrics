@@ -7,11 +7,15 @@ import com.example.trello.services.TrelloService;
 import com.example.trello.services.WebhookService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -95,8 +99,21 @@ public class TrelloController {
     void webhook(@RequestBody String request){
 
         //webhookService.validateWebhook(request);
+
         JSONObject jsonObject = new JSONObject(request);
         System.out.println(jsonObject);
         trelloService.listenWebhook(jsonObject);
+    }
+
+
+    @RequestMapping(value = "/trello/hook", method = {RequestMethod.GET})
+    public HttpEntity<String> handleTestRequest () {
+
+        MultiValueMap<String, String> headers = new HttpHeaders();
+        headers.put("test-header", Arrays.asList("test-header-value"));
+
+        HttpEntity<String> responseEntity = new HttpEntity<>("test body", headers);
+
+        return responseEntity;
     }
 }
