@@ -105,7 +105,7 @@ public class TrelloService {
     public void listenWebhook(JSONObject jsonObject){
         // add verification
 
-
+        System.out.println("listening webhook");
         Action action = getAction(jsonObject.getJSONObject("action"));
         actionRepository.save(action);
         System.out.println(action.toString());
