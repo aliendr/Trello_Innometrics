@@ -42,6 +42,19 @@
 			</exclusions>
 		</dependency>
 
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+
+
 
 		<!-- Thanks for using https://jar-download.com -->
 
@@ -61,7 +74,6 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.mashape.unirest/unirest-java -->
 		<dependency>
 			<groupId>com.mashape.unirest</groupId>
 			<artifactId>unirest-java</artifactId>

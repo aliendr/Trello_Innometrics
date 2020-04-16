@@ -22,8 +22,6 @@ import java.util.Optional;
 @RestController
 public class TrelloController {
 
-    private String listeningUrl;
-
     @Autowired
     private BoardService boardService;
     @Autowired
