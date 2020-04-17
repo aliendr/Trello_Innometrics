@@ -100,6 +100,7 @@ public class TrelloController {
 
         JSONObject jsonObject = new JSONObject(request);
         System.out.println(jsonObject);
+        //System.out.println("HEAD request came");
         trelloService.listenWebhook(jsonObject);
     }
 
@@ -107,11 +108,12 @@ public class TrelloController {
     @RequestMapping(value = "/trello/hook", method = {RequestMethod.GET})
     public HttpEntity<String> handleTestRequest () {
 
+
         MultiValueMap<String, String> headers = new HttpHeaders();
         headers.put("test-header", Arrays.asList("test-header-value"));
 
         HttpEntity<String> responseEntity = new HttpEntity<>("test body", headers);
-
+        System.out.println("HEAD request came");
         return responseEntity;
     }
 }
