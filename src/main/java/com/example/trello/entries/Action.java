@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 @Entity
 public class Action {
@@ -12,11 +13,39 @@ public class Action {
     private String actionId;
     private String boardId;
     private String idMemberCreator;
+    private String emailMemberCreator;
     private String type;
     private String date;
     private String memberCreatorUsername;
-    //private String data;
 
+
+    //private String data;
+    private String boardName;
+    private String cardId;
+    private String cardName;
+
+    private String cardClosed;
+    private String listName;
+    private String listId;
+    private String checkItemId;
+    private String checkItemName;
+    private String checkItemState;
+    private String checkListId;
+    private String checkListName;
+    private String listAfterId;
+    private String listAfterName;
+    private String listBeforeId;
+    private String listBeforeName;
+
+    private String attachmentId;
+    private String attachmentName;
+
+    private String memberAddedDeletedId;
+    private String memberAddedDeletedName;
+    private String old;
+    private String pluginId;
+    private String pluginName;
+    private String pluginUrl;
 
 
 
@@ -39,9 +68,110 @@ public class Action {
         this.boardId = boardId;
     }
 
-//    public void setData(String data) {
-//        this.data = data;
-//    }
+    public String getAttachmentId() {
+        return attachmentId;
+    }
+
+    public String getPluginId() {
+        return pluginId;
+    }
+
+    public void setPluginId(String pluginId) {
+        this.pluginId = pluginId;
+    }
+
+    public String getPluginName() {
+        return pluginName;
+    }
+
+    public void setPluginName(String pluginName) {
+        this.pluginName = pluginName;
+    }
+
+    public String getPluginUrl() {
+        return pluginUrl;
+    }
+
+    public void setPluginUrl(String pluginUrl) {
+        this.pluginUrl = pluginUrl;
+    }
+
+    public String getOld() {
+        return old;
+    }
+
+    public void setOld(String old) {
+        this.old = old;
+    }
+
+    public void setAttachmentId(String attachmentId) {
+        this.attachmentId = attachmentId;
+    }
+
+    public String getMemberAddedDeletedId() {
+        return memberAddedDeletedId;
+    }
+
+    public void setMemberAddedDeletedId(String memberAddedDeletedId) {
+        this.memberAddedDeletedId = memberAddedDeletedId;
+    }
+
+    public String getMemberAddedDeletedName() {
+        return memberAddedDeletedName;
+    }
+
+    public void setMemberAddedDeletedName(String memberAddedDeletedName) {
+        this.memberAddedDeletedName = memberAddedDeletedName;
+    }
+
+    public String getAttachmentName() {
+        return attachmentName;
+    }
+
+    public void setAttachmentName(String attachmentName) {
+        this.attachmentName = attachmentName;
+    }
+
+
+    public String getCardClosed() {
+        return cardClosed;
+    }
+
+    public void setCardClosed(String cardClosed) {
+        this.cardClosed = cardClosed;
+    }
+
+    public String getListAfterId() {
+        return listAfterId;
+    }
+
+    public void setListAfterId(String listAfterId) {
+        this.listAfterId = listAfterId;
+    }
+
+    public String getListAfterName() {
+        return listAfterName;
+    }
+
+    public void setListAfterName(String listAfterName) {
+        this.listAfterName = listAfterName;
+    }
+
+    public String getListBeforeId() {
+        return listBeforeId;
+    }
+
+    public void setListBeforeId(String listBeforeId) {
+        this.listBeforeId = listBeforeId;
+    }
+
+    public String getListBeforeName() {
+        return listBeforeName;
+    }
+
+    public void setListBeforeName(String listBeforeName) {
+        this.listBeforeName = listBeforeName;
+    }
 
     public void setActionId(String actionId) {
         this.actionId = actionId;
@@ -80,6 +210,14 @@ public class Action {
 //    }
 
 
+    public String getEmailMemberCreator() {
+        return emailMemberCreator;
+    }
+
+    public void setEmailMemberCreator(String emailMemberCreator) {
+        this.emailMemberCreator = emailMemberCreator;
+    }
+
     @Override
     public String toString() {
         return "Action{" +
@@ -98,5 +236,85 @@ public class Action {
 
     public void setMemberCreatorUsername(String memberCreatorUsername) {
         this.memberCreatorUsername = memberCreatorUsername;
+    }
+
+    public String getBoardName() {
+        return boardName;
+    }
+
+    public void setBoardName(String boardName) {
+        this.boardName = boardName;
+    }
+
+    public String getCardId() {
+        return cardId;
+    }
+
+    public String getCardName() {
+        return cardName;
+    }
+
+    public void setCardName(String cardName) {
+        this.cardName = cardName;
+    }
+
+    public String getListName() {
+        return listName;
+    }
+
+    public void setListName(String listName) {
+        this.listName = listName;
+    }
+
+    public String getListId() {
+        return listId;
+    }
+
+    public void setListId(String listId) {
+        this.listId = listId;
+    }
+
+    public void setCardId(String cardId) {
+        this.cardId = cardId;
+    }
+
+    public String getCheckItemId() {
+        return checkItemId;
+    }
+
+    public void setCheckItemId(String checkItemId) {
+        this.checkItemId = checkItemId;
+    }
+
+    public String getCheckItemName() {
+        return checkItemName;
+    }
+
+    public void setCheckItemName(String checkItemName) {
+        this.checkItemName = checkItemName;
+    }
+
+    public String getCheckItemState() {
+        return checkItemState;
+    }
+
+    public void setCheckItemState(String checkItemState) {
+        this.checkItemState = checkItemState;
+    }
+
+    public String getCheckListId() {
+        return checkListId;
+    }
+
+    public void setCheckListId(String checkListId) {
+        this.checkListId = checkListId;
+    }
+
+    public String getCheckListName() {
+        return checkListName;
+    }
+
+    public void setCheckListName(String checkListName) {
+        this.checkListName = checkListName;
     }
 }

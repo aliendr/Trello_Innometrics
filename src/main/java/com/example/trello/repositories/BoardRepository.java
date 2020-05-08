@@ -12,6 +12,7 @@ import java.util.Optional;
 public interface BoardRepository extends JpaRepository<Board,String> {
     public Optional<Board> findByTokenAndKeyAndBoardUrl(String token, String key, String url);
     public Optional<List<Board>> findAllByTokenAndKey(String token, String key);
+    public Board findAllByBoardId(String boardId);
 
 }
 

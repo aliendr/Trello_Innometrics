@@ -4,7 +4,10 @@ import com.example.trello.entries.Board;
 import com.example.trello.services.ActionService;
 import com.example.trello.services.BoardService;
 import com.example.trello.services.TrelloService;
-import com.example.trello.services.WebhookService;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.fluent.Content;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -15,9 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.nio.charset.Charset;
+import java.util.*;
 
 @RestController
 public class TrelloController {
@@ -28,8 +30,6 @@ public class TrelloController {
     private ActionService actionService;
     @Autowired
     private TrelloService trelloService;
-//    @Autowired
-//    private WebhookService webhookService;
 
     @PostMapping("/keytoken")
     public List<Board> addToken(@RequestParam String token, @RequestParam String key) {
@@ -40,6 +40,16 @@ public class TrelloController {
     public Optional<Board> fetchBoard(@RequestParam String token, @RequestParam String key, @RequestParam String boardUrl) throws IOException {
         return trelloService.addTokenKeyBoardUrl(token, key, boardUrl);
     }
+
+    @GetMapping("/board")
+    Optional<Board> getBoard(@RequestParam String token, @RequestParam String key,
+                               @RequestParam String boardUrl) {
+        Optional<Board> board = boardService.getBoardByUrl(token,key,boardUrl);
+        if(board.isPresent())
+            return board;
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "invalid board url");
+    }
+
 
     @GetMapping("/boards/action")
     Optional<Action> getAction(@RequestParam String token, @RequestParam String key,
@@ -97,7 +107,6 @@ public class TrelloController {
     void webhook(@RequestBody String request){
 
         //webhookService.validateWebhook(request);
-
         JSONObject jsonObject = new JSONObject(request);
         System.out.println(jsonObject);
         //System.out.println("HEAD request came");
@@ -116,4 +125,28 @@ public class TrelloController {
         System.out.println("HEAD request came");
         return responseEntity;
     }
+
+    @GetMapping(value = "/trello/hooks")
+    public String getWebhooksForToken(@RequestParam String token, @RequestParam String key){
+        String request = "https://api.trello.com/1/tokens/"+token+"/webhooks?"+key;
+        String response = com.example.trello.HttpClient.jsonGetRequest(request);
+        return new JSONObject(response).toString();
+    }
+
+    @RequestMapping(value = "/trello/hook", method = {RequestMethod.DELETE})
+    public void deleteWebhook (@RequestParam String token, @RequestParam String key, @RequestParam String idWebhook) throws IOException {
+        final Collection<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("key", key));
+
+
+        final Content deleteResultForm = Request.Delete("https://api.trello.com/1/tokens/"+ token + "/webhooks/"+ idWebhook)
+                .bodyForm(params, Charset.defaultCharset())
+                .execute().returnContent();
+        System.out.println(deleteResultForm.asString());
+
+    }
+
+
+
+
 }

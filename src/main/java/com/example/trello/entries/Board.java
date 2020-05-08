@@ -12,11 +12,7 @@ public class Board {
     private String token;
     private String key;
     private String name;
-    //@Id
     private String boardUrl;
-    @ElementCollection
-    @CollectionTable(name="listOfActions")
-    private List<String> listOfActions;
 
     private String webhook;
 
@@ -39,14 +35,6 @@ public class Board {
 
     public void setBoardId(String boardId) {
         this.boardId = boardId;
-    }
-
-    public List<String> getListOfActions() {
-        return listOfActions;
-    }
-
-    public void setListOfActions(List<String> listOfActions) {
-        this.listOfActions = listOfActions;
     }
 
     public String getName() {
