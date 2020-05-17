@@ -4,6 +4,9 @@ import com.example.trello.entries.Board;
 import com.example.trello.services.ActionService;
 import com.example.trello.services.BoardService;
 import com.example.trello.services.TrelloService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
@@ -22,6 +25,7 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 @RestController
+@RequestMapping("/api")
 public class TrelloController {
 
     @Autowired
@@ -31,16 +35,70 @@ public class TrelloController {
     @Autowired
     private TrelloService trelloService;
 
+
+
+    @ApiOperation(
+            value = "get list of borads belonging to that token and key"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successful",
+                    response = Board.class
+            ),
+            @ApiResponse(
+                    code = 400,
+                    message = "Some problem arrived, message will contain information",
+                    response = ResponseStatusException.class
+            )
+    })
+
     @PostMapping("/keytoken")
     public List<Board> addToken(@RequestParam String token, @RequestParam String key) {
         return trelloService.addTokenKey(token, key);
     }
 
+
+
+    @ApiOperation(
+            value = "get fetched borad",
+            notes = "Method collects actions from given board and connects webhook for it "
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successful",
+                    response = Board.class
+            ),
+            @ApiResponse(
+                    code = 400,
+                    message = "Some problem arrived, message will contain information",
+                    response = IOException.class
+            )
+    })
     @PostMapping("/keytoken/boardUrl")
     public Optional<Board> fetchBoard(@RequestParam String token, @RequestParam String key, @RequestParam String boardUrl) throws IOException {
         return trelloService.addTokenKeyBoardUrl(token, key, boardUrl);
     }
 
+
+
+    @ApiOperation(
+            value = "get fetched borad by url",
+            notes = "Method returns a board if it is already fetched"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successful",
+                    response = Board.class
+            ),
+            @ApiResponse(
+                    code = 400,
+                    message = "Some problem arrived, message will contain information",
+                    response = ResponseStatusException.class
+            )
+    })
     @GetMapping("/board")
     Optional<Board> getBoard(@RequestParam String token, @RequestParam String key,
                                @RequestParam String boardUrl) {
@@ -51,6 +109,23 @@ public class TrelloController {
     }
 
 
+
+    @ApiOperation(
+            value = "get fetched action",
+            notes = "Method returns action if it`s board is fetched and there exists such action "
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successful",
+                    response = Action.class
+            ),
+            @ApiResponse(
+                    code = 400,
+                    message = "Some problem arrived, message will contain information",
+                    response = ResponseStatusException.class
+            )
+    })
     @GetMapping("/boards/action")
     Optional<Action> getAction(@RequestParam String token, @RequestParam String key,
                                @RequestParam String boardUrl, @RequestParam String actionId) {
@@ -60,6 +135,25 @@ public class TrelloController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "invalid board url");
     }
 
+
+
+
+    @ApiOperation(
+            value = "get actions for a fetched board using search filters",
+            notes = "You can set type of action or date from/to"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successful",
+                    response = Action.class
+            ),
+            @ApiResponse(
+                    code = 400,
+                    message = "Some problem arrived, message will contain information",
+                    response = ResponseStatusException.class
+            )
+    })
 
     @GetMapping("/boards/actions")
     List<Optional<Action>> getActionsByType(@RequestParam String token, @RequestParam String key,
@@ -103,6 +197,23 @@ public class TrelloController {
     }
 
 
+
+    @ApiOperation(
+            value = "listens webhook",
+            notes = "Method recieves all actions that triggered by trello server webhook"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successful"
+            ),
+            @ApiResponse(
+                    code = 400,
+                    message = "Some problem arrived, message will contain information",
+                    response = ResponseStatusException.class
+            )
+    })
+
     @PostMapping("/trello/hook")
     void webhook(@RequestBody String request){
 
@@ -114,6 +225,24 @@ public class TrelloController {
     }
 
 
+
+
+    @ApiOperation(
+            value = "greeting method",
+            notes = "Trello server ensures that agent is alive and is able to recieve webhook body "
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successful",
+                    response = HttpEntity.class
+            ),
+            @ApiResponse(
+                    code = 400,
+                    message = "Some problem arrived, message will contain information",
+                    response = ResponseStatusException.class
+            )
+    })
     @RequestMapping(value = "/trello/hook", method = {RequestMethod.GET})
     public HttpEntity<String> handleTestRequest () {
 
@@ -122,9 +251,28 @@ public class TrelloController {
         headers.put("test-header", Arrays.asList("test-header-value"));
 
         HttpEntity<String> responseEntity = new HttpEntity<>("test body", headers);
-        System.out.println("HEAD request came");
+        //System.out.println("HEAD request came");
         return responseEntity;
     }
+
+
+
+    @ApiOperation(
+            value = "get active webhooks for token",
+            notes = "Method returns active webhooks for token"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successful",
+                    response = String.class
+            ),
+            @ApiResponse(
+                    code = 400,
+                    message = "Some problem arrived, message will contain information",
+                    response = ResponseStatusException.class
+            )
+    })
 
     @GetMapping(value = "/trello/hooks")
     public String getWebhooksForToken(@RequestParam String token, @RequestParam String key){
@@ -132,6 +280,24 @@ public class TrelloController {
         String response = com.example.trello.HttpClient.jsonGetRequest(request);
         return new JSONObject(response).toString();
     }
+
+
+
+    @ApiOperation(
+            value = "delete a webhook",
+            notes = "Method stops listening a webhook"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successful"
+            ),
+            @ApiResponse(
+                    code = 400,
+                    message = "Some problem arrived, message will contain information",
+                    response = IOException.class
+            )
+    })
 
     @RequestMapping(value = "/trello/hook", method = {RequestMethod.DELETE})
     public void deleteWebhook (@RequestParam String token, @RequestParam String key, @RequestParam String idWebhook) throws IOException {
