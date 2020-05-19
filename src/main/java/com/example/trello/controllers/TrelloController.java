@@ -220,7 +220,7 @@ public class TrelloController {
         //webhookService.validateWebhook(request);
         JSONObject jsonObject = new JSONObject(request);
         System.out.println(jsonObject);
-        //System.out.println("HEAD request came");
+        System.out.println("webhook entering");
         trelloService.listenWebhook(jsonObject);
     }
 
@@ -251,7 +251,7 @@ public class TrelloController {
         headers.put("test-header", Arrays.asList("test-header-value"));
 
         HttpEntity<String> responseEntity = new HttpEntity<>("test body", headers);
-        //System.out.println("HEAD request came");
+        System.out.println("HEAD request came");
         return responseEntity;
     }
 

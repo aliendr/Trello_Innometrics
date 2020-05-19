@@ -6,6 +6,8 @@ import com.example.trello.entries.Board;
 import com.example.trello.repositories.ActionRepository;
 import com.example.trello.repositories.BoardRepository;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.fluent.Content;
+import org.apache.http.client.fluent.Request;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.*;
 
 @Service
@@ -86,10 +89,10 @@ public class TrelloService {
         params.add(new BasicNameValuePair("callbackURL", HOST_IP));
 
 
-//            final Content postResultForm = Request.Post("https://api.trello.com/1/tokens/"+ token + "/webhooks/")
-//                    .bodyForm(params, Charset.defaultCharset())
-//                    .execute().returnContent();
-//            System.out.println(postResultForm.asString());
+            final Content postResultForm = Request.Post("https://api.trello.com/1/tokens/"+ token + "/webhooks/")
+                    .bodyForm(params, Charset.defaultCharset())
+                    .execute().returnContent();
+            System.out.println(postResultForm.asString());
 
     }
 
