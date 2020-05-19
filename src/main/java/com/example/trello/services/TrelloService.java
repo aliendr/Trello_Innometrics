@@ -64,13 +64,16 @@ public class TrelloService {
                 if (board.getBoardUrl().equals(url)) {
                     String request = baseAddress + "boards/" + board.getBoardId() + "/?fields=id&actions=all&actions_limit=1000&action_memberCreator_fields=username" + "&key=" + key + "&token=" + token;
                     String response = com.example.trello.HttpClient.jsonGetRequest(request);
-                    fetchActions(response, token, key);
+
                     try {
+                        System.out.println("BEFORE WEBHOOK");
                         webhook(token,key, board.getBoardId());
                         board.setWebhook(true);
                         boardRepository.save(board);
+                        fetchActions(response, token, key);
                     }
                     catch (IOException e){
+                        System.out.println("webhook did not succeed");
                         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "webhook did not succeed");
                     }
 
