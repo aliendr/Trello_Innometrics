@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 @RestController
+@RequestMapping("/api")
 public class TrelloController {
 
     @Autowired

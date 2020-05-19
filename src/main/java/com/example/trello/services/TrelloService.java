@@ -23,7 +23,7 @@ import java.util.*;
 @Service
 public class TrelloService {
 
-    private String HOST_IP = System.getenv("HOST_IP") + "/trello/hook";
+    private String HOST_IP = System.getenv("HOST_IP") + "/api/trello/hook";
 
     private String baseAddress = "https://api.trello.com/1/";
 
