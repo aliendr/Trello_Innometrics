@@ -65,8 +65,16 @@ public class TrelloService {
                     String request = baseAddress + "boards/" + board.getBoardId() + "/?fields=id&actions=all&actions_limit=1000&action_memberCreator_fields=username" + "&key=" + key + "&token=" + token;
                     String response = com.example.trello.HttpClient.jsonGetRequest(request);
                     fetchActions(response, token, key);
-                    boardRepository.save(board);
-                    webhook(token,key, board.getBoardId());
+                    try {
+                        webhook(token,key, board.getBoardId());
+                        board.setWebhook(true);
+                        boardRepository.save(board);
+                    }
+                    catch (IOException e){
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "webhook did not succeed");
+                    }
+
+
                     found = true;
                     break;
                 }
@@ -89,11 +97,10 @@ public class TrelloService {
         params.add(new BasicNameValuePair("callbackURL", HOST_IP));
 
 
-            final Content postResultForm = Request.Post("https://api.trello.com/1/tokens/"+ token + "/webhooks/")
-                    .bodyForm(params, Charset.defaultCharset())
-                    .execute().returnContent();
-            System.out.println(postResultForm.asString());
-
+        final Content postResultForm = Request.Post("https://api.trello.com/1/tokens/"+ token + "/webhooks/")
+                .bodyForm(params, Charset.defaultCharset())
+                .execute().returnContent();
+        System.out.println(postResultForm.asString());
     }
 
     public void listenWebhook(JSONObject jsonObject){

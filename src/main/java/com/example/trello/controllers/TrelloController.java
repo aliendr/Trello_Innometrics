@@ -25,7 +25,6 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 @RestController
-@RequestMapping("/api")
 public class TrelloController {
 
     @Autowired
@@ -61,7 +60,7 @@ public class TrelloController {
 
 
     @ApiOperation(
-            value = "get fetched borad",
+            value = "fetch a borad",
             notes = "Method collects actions from given board and connects webhook for it "
     )
     @ApiResponses(value = {

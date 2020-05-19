@@ -14,7 +14,7 @@ public class Board {
     private String name;
     private String boardUrl;
 
-    private String webhook;
+    private boolean webhook;
 
 
     private Board(){};
@@ -69,11 +69,11 @@ public class Board {
         this.key = key;
     }
 
-    public String getWebhook() {
+    public boolean getWebhook() {
         return webhook;
     }
 
-    public void setWebhook(String webhook) {
+    public void setWebhook(boolean webhook) {
         this.webhook = webhook;
     }
 }
