@@ -276,7 +276,7 @@ public class TrelloController {
 
     @GetMapping(value = "/trello/hooks")
     public String getWebhooksForToken(@RequestParam String token, @RequestParam String key){
-        String request = "https://api.trello.com/1/tokens/"+token+"/webhooks?"+key;
+        String request = "https://api.trello.com/1/tokens/"+token+"/webhooks?key="+key;
         String response = com.example.trello.HttpClient.jsonGetRequest(request);
         return new JSONObject(response).toString();
     }
@@ -301,12 +301,8 @@ public class TrelloController {
 
     @RequestMapping(value = "/trello/hook", method = {RequestMethod.DELETE})
     public void deleteWebhook (@RequestParam String token, @RequestParam String key, @RequestParam String idWebhook) throws IOException {
-        final Collection<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("key", key));
 
-
-        final Content deleteResultForm = Request.Delete("https://api.trello.com/1/tokens/"+ token + "/webhooks/"+ idWebhook)
-                .bodyForm(params, Charset.defaultCharset())
+        final Content deleteResultForm = Request.Delete("https://api.trello.com/1//webhooks/"+ idWebhook + "?key="+ key +"&token=" + token)
                 .execute().returnContent();
         System.out.println(deleteResultForm.asString());
 
