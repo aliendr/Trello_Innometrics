@@ -11,6 +11,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -219,7 +220,7 @@ public class TrelloController {
 
         //webhookService.validateWebhook(request);
         JSONObject jsonObject = new JSONObject(request);
-        System.out.println(jsonObject);
+        //System.out.println(jsonObject);
         System.out.println("webhook entering");
         trelloService.listenWebhook(jsonObject);
     }
@@ -278,7 +279,7 @@ public class TrelloController {
     public String getWebhooksForToken(@RequestParam String token, @RequestParam String key){
         String request = "https://api.trello.com/1/tokens/"+token+"/webhooks?key="+key;
         String response = com.example.trello.HttpClient.jsonGetRequest(request);
-        return new JSONObject(response).toString();
+        return new JSONArray(response).toString();
     }
 
 
@@ -302,7 +303,7 @@ public class TrelloController {
     @RequestMapping(value = "/trello/hook", method = {RequestMethod.DELETE})
     public void deleteWebhook (@RequestParam String token, @RequestParam String key, @RequestParam String idWebhook) throws IOException {
 
-        final Content deleteResultForm = Request.Delete("https://api.trello.com/1//webhooks/"+ idWebhook + "?key="+ key +"&token=" + token)
+        final Content deleteResultForm = Request.Delete("https://api.trello.com/1/webhooks/"+ idWebhook + "?key="+ key +"&token=" + token)
                 .execute().returnContent();
         System.out.println(deleteResultForm.asString());
 
