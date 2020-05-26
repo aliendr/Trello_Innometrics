@@ -68,7 +68,6 @@ public class TrelloService {
                     try {
                         System.out.println("BEFORE WEBHOOK");
                         webhook(token,key, board.getBoardId());
-                        board.setWebhook(true);
                         boardRepository.save(board);
                         fetchActions(response, token, key);
                     }
@@ -259,6 +258,35 @@ public class TrelloService {
         tokenKey[0]=board.getToken();
         tokenKey[1]=board.getKey();
         return tokenKey;
+    }
+
+    public String getIdOfWebhook(String token,String key,String boardUrl){
+
+        String boardId = getBoardIdFromUrl(token, key, boardUrl);
+
+        String request = "https://api.trello.com/1/tokens/"+token+"/webhooks?key="+key;
+        String response = com.example.trello.HttpClient.jsonGetRequest(request);
+        JSONArray arrayOfwebhooks = new JSONArray(response);
+        String webhookId = "";
+        for (int i = 0; i < arrayOfwebhooks.length(); i++) {
+            if(arrayOfwebhooks.getJSONObject(i).getString("idModel").equals(boardId) && arrayOfwebhooks.getJSONObject(i).getString("callbackURL").equals(HOST_IP)){
+                webhookId = arrayOfwebhooks.getJSONObject(i).getString("id");
+                break;
+            }
+        }
+        return  webhookId;
+    }
+
+    public String getBoardIdFromUrl(String token,String key,String boardUrl){
+        List<Board> boards =getBoadsList(token, key);
+        String id="";
+        for (Board board : boards) {
+            if (board.getBoardUrl().equals(boardUrl)) {
+                id=board.getBoardId();
+                break;
+            }
+        }
+        return id;
     }
 
 }

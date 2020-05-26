@@ -36,7 +36,7 @@ public class TrelloController {
     @Autowired
     private TrelloService trelloService;
 
-
+    private String HOST_IP = System.getenv("HOST_IP") + "/api/trello/hook";
 
     @ApiOperation(
             value = "get list of borads belonging to that token and key"
@@ -283,6 +283,26 @@ public class TrelloController {
     }
 
 
+    @ApiOperation(
+            value = "get id of a webhook on that board"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successful",
+                    response = String.class
+            ),
+            @ApiResponse(
+                    code = 400,
+                    message = "Some problem arrived, message will contain information",
+                    response = ResponseStatusException.class
+            )
+    })
+
+    @RequestMapping(value = "/trello/hook/id", method = {RequestMethod.GET})
+    public String getIdOfWebhook(@RequestParam String token, @RequestParam String key, @RequestParam String boardUrl){
+        return  trelloService.getIdOfWebhook(token,key,boardUrl);
+    }
 
     @ApiOperation(
             value = "delete a webhook",
@@ -310,6 +330,25 @@ public class TrelloController {
     }
 
 
-
+    @ApiOperation(
+            value = "set a webhook for board"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successful"
+            ),
+            @ApiResponse(
+                    code = 400,
+                    message = "Some problem arrived, message will contain information",
+                    response = ResponseStatusException.class
+            )
+    })
+    @RequestMapping(value = "/trello/hook/enable", method = {RequestMethod.POST})
+    public void setWebhook(@RequestParam String token, @RequestParam String key, @RequestParam String boardUrl) throws IOException{
+        if(trelloService.getIdOfWebhook(token,key,boardUrl).equals("")){
+            trelloService.webhook(token,key,trelloService.getBoardIdFromUrl(token,key,boardUrl));
+        }
+    }
 
 }
