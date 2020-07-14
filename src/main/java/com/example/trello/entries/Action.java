@@ -13,38 +13,53 @@ public class Action {
     private String actionId;
     private String boardId;
     private String idMemberCreator;
-    private String emailMemberCreator;
+
     private String type;
+
     private String date;
+
+    @Lob
     private String memberCreatorUsername;
 
 
-    //private String data;
+    @Lob
     private String boardName;
     private String cardId;
+    @Lob
     private String cardName;
 
     private String cardClosed;
+    @Lob
     private String listName;
     private String listId;
     private String checkItemId;
+    @Lob
     private String checkItemName;
     private String checkItemState;
     private String checkListId;
+    @Lob
     private String checkListName;
     private String listAfterId;
+    @Lob
     private String listAfterName;
     private String listBeforeId;
+    @Lob
     private String listBeforeName;
 
     private String attachmentId;
+    @Lob
     private String attachmentName;
 
     private String memberAddedDeletedId;
+    @Lob
     private String memberAddedDeletedName;
+    @Lob
     private String old;
+    @Lob
     private String pluginId;
+    @Lob
     private String pluginName;
+    @Lob
     private String pluginUrl;
 
 
@@ -205,18 +220,7 @@ public class Action {
         return this.date;
     }
 
-//     public String getData(){
-//        return data;
-//    }
 
-
-    public String getEmailMemberCreator() {
-        return emailMemberCreator;
-    }
-
-    public void setEmailMemberCreator(String emailMemberCreator) {
-        this.emailMemberCreator = emailMemberCreator;
-    }
 
     @Override
     public String toString() {

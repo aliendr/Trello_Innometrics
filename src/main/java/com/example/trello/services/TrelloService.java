@@ -3,8 +3,10 @@ package com.example.trello.services;
 import com.example.trello.HttpClient;
 import com.example.trello.entries.Action;
 import com.example.trello.entries.Board;
+import com.example.trello.entries.Member;
 import com.example.trello.repositories.ActionRepository;
 import com.example.trello.repositories.BoardRepository;
+import com.example.trello.repositories.MemberRepository;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
@@ -32,6 +34,8 @@ public class TrelloService {
     @Autowired
     private BoardRepository boardRepository;
 
+    @Autowired
+    private MemberRepository memberRepository;
 
 
     public void validateTokenKey(String token, String key){
@@ -109,7 +113,10 @@ public class TrelloService {
         System.out.println("listening webhook");
         Action action = getAction(jsonObject.getJSONObject("action"));
         String[] tokenKey = getTokenKeyFromBoardId(action.getBoardId());
-        action.setEmailMemberCreator(getEmail(action.getIdMemberCreator(),tokenKey[0],tokenKey[1]));
+
+//        if(memberRepository.findById(action.getIdMemberCreator()).isEmpty())
+//            memberRepository.save(new Member(action.getIdMemberCreator(),getEmail(action.getIdMemberCreator(), tokenKey[0],tokenKey[1])));
+
         actionRepository.save(action);
         System.out.println(action.toString());
 
@@ -138,7 +145,10 @@ public class TrelloService {
         JSONArray actionJsonArray = actionsJson.getJSONArray("actions");
         for (int i = 0; i < actionJsonArray.length(); i++) {
             Action action = getAction(actionJsonArray.getJSONObject(i));
-            action.setEmailMemberCreator(getEmail(action.getIdMemberCreator(), token,key));
+
+//            if(memberRepository.findById(action.getIdMemberCreator()).isEmpty())
+//                memberRepository.save(new Member(action.getIdMemberCreator(),getEmail(action.getIdMemberCreator(), token,key)));
+
             actionRepository.save(action);
         }
     }
@@ -163,8 +173,8 @@ public class TrelloService {
                 action.setCardName(cardJson.getString("name"));
             if (cardJson.has("idList"))
                 action.setListId(cardJson.getString("idList"));
-            if (cardJson.has("closed"))
-                action.setCardClosed(cardJson.getString("closed"));
+//            if (cardJson.has("closed"))
+//                action.setCardClosed(cardJson.getString("closed"));
         }
 
         if (data.has("list")){
